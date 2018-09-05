@@ -49,10 +49,12 @@ window.renderStatistics = function (ctx, names, times) {
   ctx.fillText('Список результатов:', CLOUD_X, FONT_HEIGHT * 3);
 
   for (var i = 0; i < names.length; i++) {
-    if (names[i] === 'Вы') {
-      var barColor = 'rgba(255, 0, 0, 1)';
-    } else {
+    var barColor = 'rgba(255, 0, 0, 1)';
+    if (names[i] !== 'Вы') {
       var alpha = Math.random();
+      if (alpha < 0.2) {
+        alpha += 0.2;
+      }
       barColor = 'rgba(0, 0, 255, ' + alpha + ')';
     }
     maxTime = getMaxTime(times);
