@@ -50,37 +50,36 @@ window.renderStatistics = function (ctx, names, times) {
     }
     return maxTime;
   };
+  var getBarColor = function () {
+    var barColor = 'rgba(255, 0, 0, 1)';
+    if (names[i] !== 'Вы') {
+      var ALPHA_OPACITY_RATE = 0.2;
+      var alpha = Math.random();
+      if (alpha < ALPHA_OPACITY_RATE) {
+        alpha += ALPHA_OPACITY_RATE;
+      }
+      barColor = 'rgba(0, 0, 255, ' + alpha + ')';
+    }
+    return barColor;
+  };
+  var renderBar = function () {
+    var TIME_FONT_HEIGHT_RATE = 1.6;
+    var NAME_FONT_HEIGHT_RATE = 0.5;
+    var time = parseInt(times[i], 10);
+    var barHeight = MAX_BAR * times[i] / getMaxTime();
+    var barIndent = CLOUD_X + i * (GAP + BAR_WIDTH);
+    ctx.fillStyle = '#000'; ctx.fillText(names[i], barIndent, CLOUD_Y);
+    ctx.fillStyle = getBarColor();
+    ctx.fillRect(barIndent, CLOUD_Y - FONT_HEIGHT * NAME_FONT_HEIGHT_RATE, BAR_WIDTH, -barHeight);
+    ctx.fillStyle = '#000';
+    ctx.fillText(time, barIndent, CLOUD_Y - barHeight - FONT_HEIGHT * TIME_FONT_HEIGHT_RATE);
+  };
 
   renderCloud(ctx, shadowCoordinatesX, shadowCoordinatesY, 'rgba(0, 0, 0, 0.7)');
   renderCloud(ctx, CLOUD_COORDINATES_X, CLOUD_COORDINATES_Y, '#fff');
   renderText(ctx);
-
   for (var i = 0; i < names.length; i++) {
-    var getBarColor = function () {
-      var barColor = 'rgba(255, 0, 0, 1)';
-      if (names[i] !== 'Вы') {
-        var ALPHA_OPACITY_RATE = 0.2;
-        var alpha = Math.random();
-        if (alpha < ALPHA_OPACITY_RATE) {
-          alpha += ALPHA_OPACITY_RATE;
-        }
-        barColor = 'rgba(0, 0, 255, ' + alpha + ')';
-      }
-      return barColor;
-    };
-
-    var renderBar = function () {
-      var TIME_FONT_HEIGHT_RATE = 1.6;
-      var NAME_FONT_HEIGHT_RATE = 0.5;
-      var time = parseInt(times[i], 10);
-      var barHeight = MAX_BAR * times[i] / getMaxTime();
-      var barIndent = CLOUD_X + i * (GAP + BAR_WIDTH);
-      ctx.fillStyle = '#000'; ctx.fillText(names[i], barIndent, CLOUD_Y);
-      ctx.fillStyle = getBarColor();
-      ctx.fillRect(barIndent, CLOUD_Y - FONT_HEIGHT * NAME_FONT_HEIGHT_RATE, BAR_WIDTH, -barHeight);
-      ctx.fillStyle = '#000';
-      ctx.fillText(time, barIndent, CLOUD_Y - barHeight - FONT_HEIGHT * TIME_FONT_HEIGHT_RATE);
-    };
-    renderBar();
+    getBarColor(names[i]);
+    renderBar(times[i]);
   }
 };
