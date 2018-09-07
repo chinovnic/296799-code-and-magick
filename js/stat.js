@@ -49,9 +49,10 @@ var getMaxTime = function (times) {
   }
   return maxTime;
 };
-var getBarColor = function (names, index) {
+var getBarColor = function (currentName) {
   var barColor = 'rgba(255, 0, 0, 1)';
-  if (names[index] !== 'Вы') {
+  console.log(currentName);
+  if (currentName !== 'Вы') {
     var ALPHA_OPACITY_RATE = 0.2;
     var alpha = Math.random();
     if (alpha < ALPHA_OPACITY_RATE) {
@@ -68,7 +69,7 @@ var renderBar = function (ctx, names, times, index) {
   var barHeight = MAX_BAR * times[index] / getMaxTime(times);
   var barIndent = CLOUD_X + index * (GAP + BAR_WIDTH);
   ctx.fillStyle = '#000'; ctx.fillText(names[index], barIndent, CLOUD_Y);
-  ctx.fillStyle = getBarColor(names, index);
+  ctx.fillStyle = getBarColor(names[index]);
   ctx.fillRect(barIndent, CLOUD_Y - FONT_HEIGHT * NAME_FONT_HEIGHT_RATE, BAR_WIDTH, -barHeight);
   ctx.fillStyle = '#000';
   ctx.fillText(time, barIndent, CLOUD_Y - barHeight - FONT_HEIGHT * TIME_FONT_HEIGHT_RATE);
