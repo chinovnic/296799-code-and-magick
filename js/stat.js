@@ -75,11 +75,11 @@ var renderBar = function (ctx, names, times, index) {
   ctx.fillText(time, barIndent, CLOUD_Y - barHeight - FONT_HEIGHT * TIME_FONT_HEIGHT_RATE);
 };
 window.renderStatistics = function (ctx, names, times) {
+  maxTime = getMaxTime(times);
   renderCloud(ctx, shadowCoordinatesX, shadowCoordinatesY, 'rgba(0, 0, 0, 0.7)');
   renderCloud(ctx, CLOUD_COORDINATES_X, CLOUD_COORDINATES_Y, '#fff');
   renderText(ctx);
   for (var i = 0; i < names.length; i++) {
-    maxTime = getMaxTime(times);
     renderBar(ctx, names, times, i);
   }
 };
