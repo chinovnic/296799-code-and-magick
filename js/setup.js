@@ -5,7 +5,8 @@ var COAT_COLORS = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161
 var EYES_COLORS = ['black', 'red', 'blue', 'yellow', 'green'];
 var similarListElement = document.querySelector('.setup-similar-list');
 var similarWizardTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
-var wizards = [0, 1, 2, 3];
+var WIZARDS_QUANTITY = 4;
+var wizards = [];
 
 var getRandom = function (arrLength) {
   return Math.floor(Math.random() * arrLength);
@@ -20,7 +21,7 @@ var getEyesColor = function () {
   return EYES_COLORS[getRandom(EYES_COLORS.length)];
 };
 
-for (var j = 0; j < wizards.length; j++) {
+for (var j = 0; j < WIZARDS_QUANTITY; j++) {
   wizards[j] = {
     name: getFullName(),
     coatColor: getCoatColor(),
