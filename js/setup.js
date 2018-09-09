@@ -30,18 +30,18 @@ for (var j = 0; j < wizards.length; j++) {
 
 document.querySelector('.setup').classList.remove('hidden');
 
-var renderWizard = function () {
+var renderWizard = function (currentWizard) {
   var wizardElement = similarWizardTemplate.cloneNode(true);
-  wizardElement.querySelector('.setup-similar-label').textContent = wizards[i].name;
-  wizardElement.querySelector('.wizard-coat').style.fill = wizards[i].coatColor;
-  wizardElement.querySelector('.wizard-eyes').style.fill = wizards[i].coatColor;
+  wizardElement.querySelector('.setup-similar-label').textContent = currentWizard.name;
+  wizardElement.querySelector('.wizard-coat').style.fill = currentWizard.coatColor;
+  wizardElement.querySelector('.wizard-eyes').style.fill = currentWizard.eyesColor;
   return wizardElement;
 };
 
 var fragment = document.createDocumentFragment();
 
 for (var i = 0; i < wizards.length; i++) {
-  fragment.appendChild(renderWizard());
+  fragment.appendChild(renderWizard(wizards[i]));
 }
 similarListElement.appendChild(fragment);
 document.querySelector('.setup-similar').classList.remove('hidden');
