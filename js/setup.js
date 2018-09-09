@@ -5,48 +5,28 @@ var COAT_COLORS = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161
 var EYES_COLORS = ['black', 'red', 'blue', 'yellow', 'green'];
 var similarListElement = document.querySelector('.setup-similar-list');
 var similarWizardTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
+var wizards = [0, 1, 2, 3];
 
 var getRandom = function (arrLength) {
-  var index = Math.floor(Math.random() * arrLength);
-  return index;
+  return Math.floor(Math.random() * arrLength);
 };
-
 var getFullName = function () {
-  var fullName = WIZARD_NAMES[getRandom(WIZARD_NAMES.length)] + ' ' + WIZARD_SURNAMES[getRandom(WIZARD_SURNAMES.length)];
-  return fullName;
+  return WIZARD_NAMES[getRandom(WIZARD_NAMES.length)] + ' ' + WIZARD_SURNAMES[getRandom(WIZARD_SURNAMES.length)];
 };
-
 var getCoatColor = function () {
-  var currentCoatColor = COAT_COLORS[getRandom(COAT_COLORS.length)];
-  return currentCoatColor;
+  return COAT_COLORS[getRandom(COAT_COLORS.length)];
 };
 var getEyesColor = function () {
-  var currentEyesColor = EYES_COLORS[getRandom(EYES_COLORS.length)];
-  return currentEyesColor;
+  return EYES_COLORS[getRandom(EYES_COLORS.length)];
 };
 
-var wizards = [
-  {
+for (var j = 0; j < wizards.length; j++) {
+  wizards[j] = {
     name: getFullName(),
     coatColor: getCoatColor(),
     eyesColor: getEyesColor()
-  },
-  {
-    name: getFullName(),
-    coatColor: getCoatColor(),
-    eyesColor: getEyesColor()
-  },
-  {
-    name: getFullName(),
-    coatColor: getCoatColor(),
-    eyesColor: getEyesColor()
-  },
-  {
-    name: getFullName(),
-    coatColor: getCoatColor(),
-    eyesColor: getEyesColor()
-  }
-];
+  };
+}
 
 document.querySelector('.setup').classList.remove('hidden');
 
@@ -61,7 +41,7 @@ var renderWizard = function () {
 var fragment = document.createDocumentFragment();
 
 for (var i = 0; i < wizards.length; i++) {
-  fragment.appendChild(renderWizard(wizards[i]));
+  fragment.appendChild(renderWizard());
 }
 similarListElement.appendChild(fragment);
 document.querySelector('.setup-similar').classList.remove('hidden');
