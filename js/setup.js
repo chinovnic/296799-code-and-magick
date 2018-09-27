@@ -12,15 +12,16 @@ var similarWizardTemplate = document.querySelector('#similar-wizard-template').c
 var wizards = [];
 var setupOpen = document.querySelector('.setup-open');
 var popupSetup = document.querySelector('.setup');
+var popupClose = document.querySelector('.setup-close');
 var userNameInput = popupSetup.querySelector('.setup-user-name');
-// var wiazardAppearance = popupSetup.querySelector('.setup-wizard-appearance');
 var wizardCoat = popupSetup.querySelector('.wizard-coat');
 var wizardEyes = popupSetup.querySelector('.wizard-eyes');
 var fireball = popupSetup.querySelector('.setup-fireball-wrap');
-
+// получаем случайный элемент массива
 var getRandom = function (arrLength) {
   return Math.floor(Math.random() * arrLength);
 };
+// имя и фамилия волшебника
 var getFullName = function () {
   return WIZARD_NAMES[getRandom(WIZARD_NAMES.length)] + ' ' + WIZARD_SURNAMES[getRandom(WIZARD_SURNAMES.length)];
 };
@@ -28,82 +29,75 @@ var getFullName = function () {
 var getColor = function (colors) {
   return colors[getRandom(colors.length)];
 };
-
+// открытие попапа
 var openPopup = function (popup) {
   popup.classList.remove('hidden');
-  window.addEventListener('keydown');
 };
-
+// закрытие попапа
 var closePopup = function (popup) {
   popup.classList.add('hidden');
-  window.removeEventListener('keydown');
+  window.removeEventListener('keydown', onEscCloser, onAvatarEnter, onAvatarCklick);
 };
-
-// единый обработчик клика на разные задачи в окне настоек
-popupSetup.onclick = function (event) {
-  var target = event.target;
-  if (target.className === 'setup-close') {
-    closePopup(popupSetup);
-  }
-
-  if (target.className === 'setup-fireball') {
-    var currentFireBallColor = getColor(FIREBALL_COLORS);
-    fireball.style.background = currentFireBallColor;
-    fireball.querySelector('input').value = currentFireBallColor;
-  }
-
-  if (target === wizardCoat.childNodes) {
-    var currentCoatColor = getColor(COAT_COLORS);
-    while (target !== popupSetup) {
-      if (target === wizardCoat) {
-        closePopup(popupSetup);
-        // wizardCoat.fill = currentCoatColor;
-        return;
-      }
-      target = target.parentNode;
-    }
-  }
-};
-
-// console.log(getColor(FIREBALL_COLORS));
-// обработчик всплывающего клика
-// popupSetup.onclick = function (event) {
-//   var target = event.target;
-//   while (target !== popupSetup) {
-//     if (target.className === 'wizard-coat') {
-//       return;
-//     }
-//     target = target.parentNode;
-//   }
-//   closePopup(popupSetup);
-// };
-
-
-// единый обработчик нажатия клавиш на разные задачи в окне настоек
-popupSetup.onkeydown = function (event) {
-  var target = event.target;
-  if ((target.className === 'setup-close') && (event.keyCode === ENTER_KEYCODE)) {
-    closePopup(popupSetup);
-  }
-};
-// Обрабатываем выход из диалога по Esc
-document.onkeydown = function (event) {
+// хэндлеры
+var onEscCloser = function () {
   if (event.keyCode === ESC_KEYCODE) {
     closePopup(popupSetup);
   }
 };
-// обрабатываем открытие диалогового окна по Enter на аватар
-setupOpen.onkeydown = function (event) {
+var onAvatarEnter = function () {
+  event.preventDefault();
   if (event.keyCode === ENTER_KEYCODE) {
-    event.preventDefault();
     openPopup(popupSetup);
   }
 };
-// обрабатываем открытие диалогового окна по клику на аватар
-setupOpen.onclick = function (event) {
+var onAvatarCklick = function () {
   event.preventDefault();
   openPopup(popupSetup);
 };
+// закрытие попапа по клику на крестик
+popupClose.addEventListener('click', function (event) {
+  event.preventDefault();
+  closePopup(popupSetup);
+});
+// закрытие попапа по Enter при фокусе на крестике
+popupClose.addEventListener('keydown', function (event) {
+  event.preventDefault();
+  if (event.keyCode === ENTER_KEYCODE) {
+    closePopup(popupSetup);
+  }
+});
+// меняем цвет фаербола и записываем его код в соответствующее поле формы
+fireball.addEventListener('click', function () {
+  var currentFireBallColor = getColor(FIREBALL_COLORS);
+  fireball.style.background = currentFireBallColor;
+  fireball.querySelector('input').value = currentFireBallColor;
+});
+// меняем цвет плаща и записываем его код в соответствующее поле формы
+wizardCoat.addEventListener('click', function () {
+  var currentCoatColor = getColor(COAT_COLORS);
+  wizardCoat.style.fill = currentCoatColor;
+  popupSetup.getElementsByTagName('input')['coat-color'].value = currentCoatColor;
+});
+// меняем цвет глаз и записываем его код в соответствующее поле формы
+wizardEyes.addEventListener('click', function () {
+  var currentEyesColor = getColor(EYES_COLORS);
+  wizardEyes.style.fill = currentEyesColor;
+  popupSetup.getElementsByTagName('input')['eyes-color'].value = currentEyesColor;
+});
+// Обрабатываем выход из диалога по Esc
+userNameInput.addEventListener('keydown', function (event) {
+  if (event.keyCode === ESC_KEYCODE) {
+    event.stopPropagation();
+  }
+});
+document.addEventListener('keydown', onEscCloser);
+
+// обрабатываем открытие диалогового окна по Enter на аватар
+setupOpen.addEventListener('keydown', onAvatarEnter);
+
+// обрабатываем открытие диалогового окна по клику на аватар
+setupOpen.addEventListener('click', onAvatarCklick);
+
 // валидация формы
 var checkInputValidity = function (inputName) {
   inputName.addEventListener('invalid', function () {
