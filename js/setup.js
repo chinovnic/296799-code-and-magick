@@ -38,6 +38,32 @@ var closePopup = function (popup) {
   popup.classList.add('hidden');
   window.removeEventListener('keydown', onEscCloser, onAvatarEnter, onAvatarCklick);
 };
+// Свойства персонажа
+for (var j = 0; j < WIZARDS_QUANTITY; j++) {
+  wizards[j] = {
+    name: getFullName(),
+    coatColor: getColor(COAT_COLORS),
+    eyesColor: getColor(EYES_COLORS)
+  };
+}
+// формируем ДОМ элементы свойств персонажа
+document.querySelector('.setup').classList.remove('hidden');
+var renderWizard = function (currentWizard) {
+  var wizardElement = similarWizardTemplate.cloneNode(true);
+  wizardElement.querySelector('.setup-similar-label').textContent = currentWizard.name;
+  wizardElement.querySelector('.wizard-coat').style.fill = currentWizard.coatColor;
+  wizardElement.querySelector('.wizard-eyes').style.fill = currentWizard.eyesColor;
+  return wizardElement;
+};
+// вставляем новые ДОМ элементы в разметку
+var fragment = document.createDocumentFragment();
+
+for (var i = 0; i < wizards.length; i++) {
+  fragment.appendChild(renderWizard(wizards[i]));
+}
+similarListElement.appendChild(fragment);
+document.querySelector('.setup-similar').classList.remove('hidden');
+
 // хэндлеры
 var onEscCloser = function () {
   if (event.keyCode === ESC_KEYCODE) {
@@ -54,6 +80,18 @@ var onAvatarCklick = function () {
   event.preventDefault();
   openPopup(popupSetup);
 };
+var onCheckValidity = function (inputName) {
+  if (inputName.validity.tooShort) {
+    inputName.setCustomValidity('Имя должно состоять минимум из 2-х символов. Лень кнопки нвжимать?');
+  } else if (inputName.validity.tooLong) {
+    inputName.setCustomValidity('Имя не должно превышать 25-ти символов. Святые угодники, ну и фантазия..');
+  } else if (inputName.validity.valueMissing) {
+    inputName.setCustomValidity('Обязательное поле');
+  } else {
+    inputName.setCustomValidity('');
+  }
+};
+
 // закрытие попапа по клику на крестик
 popupClose.addEventListener('click', function (event) {
   event.preventDefault();
@@ -91,50 +129,12 @@ userNameInput.addEventListener('keydown', function (event) {
   }
 });
 document.addEventListener('keydown', onEscCloser);
-
 // обрабатываем открытие диалогового окна по Enter на аватар
 setupOpen.addEventListener('keydown', onAvatarEnter);
-
 // обрабатываем открытие диалогового окна по клику на аватар
 setupOpen.addEventListener('click', onAvatarCklick);
-
 // валидация формы
 var checkInputValidity = function (inputName) {
-  inputName.addEventListener('invalid', function () {
-    if (inputName.validity.tooShort) {
-      inputName.setCustomValidity('Имя должно состоять минимум из 2-х символов. Лень кнопки нвжимать?');
-    } else if (inputName.validity.tooLong) {
-      inputName.setCustomValidity('Имя не должно превышать 25-ти символов. Святые угодники, ну и фантазия..');
-    } else if (inputName.validity.valueMissing) {
-      inputName.setCustomValidity('Обязательное поле');
-    } else {
-      inputName.setCustomValidity('');
-    }
-  });
+  inputName.addEventListener('invalid', onCheckValidity);
 };
 checkInputValidity(userNameInput);
-
-for (var j = 0; j < WIZARDS_QUANTITY; j++) {
-  wizards[j] = {
-    name: getFullName(),
-    coatColor: getColor(COAT_COLORS),
-    eyesColor: getColor(EYES_COLORS)
-  };
-}
-
-document.querySelector('.setup').classList.remove('hidden');
-var renderWizard = function (currentWizard) {
-  var wizardElement = similarWizardTemplate.cloneNode(true);
-  wizardElement.querySelector('.setup-similar-label').textContent = currentWizard.name;
-  wizardElement.querySelector('.wizard-coat').style.fill = currentWizard.coatColor;
-  wizardElement.querySelector('.wizard-eyes').style.fill = currentWizard.eyesColor;
-  return wizardElement;
-};
-
-var fragment = document.createDocumentFragment();
-
-for (var i = 0; i < wizards.length; i++) {
-  fragment.appendChild(renderWizard(wizards[i]));
-}
-similarListElement.appendChild(fragment);
-document.querySelector('.setup-similar').classList.remove('hidden');
