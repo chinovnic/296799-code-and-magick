@@ -17,7 +17,6 @@ var userNameInput = popupSetup.querySelector('.setup-user-name');
 var wizardCoat = popupSetup.querySelector('.wizard-coat');
 var wizardEyes = popupSetup.querySelector('.wizard-eyes');
 var fireball = popupSetup.querySelector('.setup-fireball-wrap');
-var setupWizardForm = popupSetup.querySelector('.setup-wizard-form');
 var fragment = document.createDocumentFragment();
 // получаем случайный элемент массива
 var getRandom = function (arrLength) {
@@ -99,7 +98,7 @@ setupOpen.addEventListener('keydown', onAvatarEnter);
 // обрабатываем открытие диалогового окна по клику на аватар
 setupOpen.addEventListener('click', onAvatarCklick);
 // валидация формы
-userNameInput.addEventListener('invalid', function () {
+userNameInput.addEventListener('input', function () {
   if (userNameInput.validity.tooShort) {
     userNameInput.setCustomValidity('Имя должно состоять минимум из 2-х символов. Лень кнопки нвжимать?');
   } else if (userNameInput.validity.tooLong) {
@@ -107,7 +106,6 @@ userNameInput.addEventListener('invalid', function () {
   } else if (userNameInput.validity.valueMissing) {
     userNameInput.setCustomValidity('Обязательное поле');
   } else {
-    setupWizardForm.submit();
     userNameInput.setCustomValidity('');
   }
 });
