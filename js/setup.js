@@ -1,15 +1,15 @@
 'use strict';
 var ESC_KEYCODE = 27;
 var ENTER_KEYCODE = 13;
+var WIZARDS_QUANTITY = 4;
 var WIZARD_NAMES = ['Иван', 'Хуан', 'Себастьян', 'Мария', 'Кристоф', 'Виктор', 'Юлия', 'Люпита', 'Вашингтон'];
 var WIZARD_SURNAMES = ['да Марья', 'Верон', 'Мирабелла', 'Вальц', 'Онопко', 'Топольницкая', 'Нионго', 'Ирвинг'];
 var COAT_COLORS = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)', 'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
 var EYES_COLORS = ['black', 'red', 'blue', 'yellow', 'green'];
 var FIREBALL_COLORS = ['#ee4830', '#30a8ee', '#5ce6c0', '#e848d5', '#e6e848'];
-var WIZARDS_QUANTITY = 4;
+var wizards = [];
 var similarListElement = document.querySelector('.setup-similar-list');
 var similarWizardTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
-var wizards = [];
 var setupOpen = document.querySelector('.setup-open');
 var popupSetup = document.querySelector('.setup');
 var popupClose = document.querySelector('.setup-close');
@@ -17,6 +17,8 @@ var userNameInput = popupSetup.querySelector('.setup-user-name');
 var wizardCoat = popupSetup.querySelector('.wizard-coat');
 var wizardEyes = popupSetup.querySelector('.wizard-eyes');
 var fireball = popupSetup.querySelector('.setup-fireball-wrap');
+var setupWizardForm = popupSetup.querySelector('.setup-wizard-form');
+var fragment = document.createDocumentFragment();
 // получаем случайный элемент массива
 var getRandom = function (arrLength) {
   return Math.floor(Math.random() * arrLength);
@@ -90,30 +92,26 @@ userNameInput.addEventListener('keydown', function (event) {
     event.stopPropagation();
   }
 });
+// закрытие попапа по Esc
 document.addEventListener('keydown', onEscCloser);
-
 // обрабатываем открытие диалогового окна по Enter на аватар
 setupOpen.addEventListener('keydown', onAvatarEnter);
-
 // обрабатываем открытие диалогового окна по клику на аватар
 setupOpen.addEventListener('click', onAvatarCklick);
-
 // валидация формы
-var checkInputValidity = function (inputName) {
-  inputName.addEventListener('invalid', function () {
-    if (inputName.validity.tooShort) {
-      inputName.setCustomValidity('Имя должно состоять минимум из 2-х символов. Лень кнопки нвжимать?');
-    } else if (inputName.validity.tooLong) {
-      inputName.setCustomValidity('Имя не должно превышать 25-ти символов. Святые угодники, ну и фантазия..');
-    } else if (inputName.validity.valueMissing) {
-      inputName.setCustomValidity('Обязательное поле');
-    } else {
-      inputName.setCustomValidity('');
-    }
-  });
-};
-checkInputValidity(userNameInput);
-
+userNameInput.addEventListener('invalid', function () {
+  if (userNameInput.validity.tooShort) {
+    userNameInput.setCustomValidity('Имя должно состоять минимум из 2-х символов. Лень кнопки нвжимать?');
+  } else if (userNameInput.validity.tooLong) {
+    userNameInput.setCustomValidity('Имя не должно превышать 25-ти символов. Святые угодники, ну и фантазия..');
+  } else if (userNameInput.validity.valueMissing) {
+    userNameInput.setCustomValidity('Обязательное поле');
+  } else {
+    setupWizardForm.submit();
+    userNameInput.setCustomValidity('');
+  }
+});
+// характеристики персонажа
 for (var j = 0; j < WIZARDS_QUANTITY; j++) {
   wizards[j] = {
     name: getFullName(),
@@ -121,7 +119,7 @@ for (var j = 0; j < WIZARDS_QUANTITY; j++) {
     eyesColor: getColor(EYES_COLORS)
   };
 }
-
+// ДОМ структура х-к персонажа
 document.querySelector('.setup').classList.remove('hidden');
 var renderWizard = function (currentWizard) {
   var wizardElement = similarWizardTemplate.cloneNode(true);
@@ -130,9 +128,7 @@ var renderWizard = function (currentWizard) {
   wizardElement.querySelector('.wizard-eyes').style.fill = currentWizard.eyesColor;
   return wizardElement;
 };
-
-var fragment = document.createDocumentFragment();
-
+// вставка сформированных ДОМ элементов в разметку
 for (var i = 0; i < wizards.length; i++) {
   fragment.appendChild(renderWizard(wizards[i]));
 }
