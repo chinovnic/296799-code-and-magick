@@ -19,11 +19,10 @@ var wizardEyes = popupSetup.querySelector('.wizard-eyes');
 var fireball = popupSetup.querySelector('.setup-fireball-wrap');
 var fragment = document.createDocumentFragment();
 var dialogHandler = popupSetup.querySelector('input');
+// координаты диалогового окна
 var startX;
 var startY;
-// var shiftX;
-// var shiftY;
-
+// перетаскивание диалогового окна
 dialogHandler.addEventListener('mousedown', function (event) {
   event.preventDefault();
   startX = popupSetup.offsetLeft;
@@ -42,8 +41,7 @@ dialogHandler.addEventListener('mousedown', function (event) {
       x: startCoords.x - moveEvt.clientX,
       y: startCoords.y - moveEvt.clientY
     };
-    // shiftX = shift.x;
-    // shiftY = shift.y;
+
     startCoords = {
       x: moveEvt.clientX,
       y: moveEvt.clientY
@@ -62,8 +60,6 @@ dialogHandler.addEventListener('mousedown', function (event) {
         dialogHandler.removeEventListener('click', onClickPreventDefault);
       };
       dialogHandler.addEventListener('click', onClickPreventDefault);
-      // startX = shiftX;
-      // startY = shiftY;
     }
   };
 
