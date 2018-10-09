@@ -19,11 +19,15 @@ var wizardEyes = popupSetup.querySelector('.wizard-eyes');
 var fireball = popupSetup.querySelector('.setup-fireball-wrap');
 var fragment = document.createDocumentFragment();
 var dialogHandler = popupSetup.querySelector('input');
-var startX = popupSetup.offsetLeft;
-var startY = popupSetup.offsetTop;
+var startX;
+var startY;
+// var shiftX;
+// var shiftY;
 
 dialogHandler.addEventListener('mousedown', function (event) {
   event.preventDefault();
+  startX = popupSetup.offsetLeft;
+  startY = popupSetup.offsetTop;
   var startCoords = {
     x: event.clientX,
     y: event.clientY
@@ -33,12 +37,13 @@ dialogHandler.addEventListener('mousedown', function (event) {
 
   var onMouseMove = function (moveEvt) {
     moveEvt.preventDefault();
-
+    dragged = true;
     var shift = {
       x: startCoords.x - moveEvt.clientX,
       y: startCoords.y - moveEvt.clientY
     };
-
+    // shiftX = shift.x;
+    // shiftY = shift.y;
     startCoords = {
       x: moveEvt.clientX,
       y: moveEvt.clientY
@@ -49,7 +54,6 @@ dialogHandler.addEventListener('mousedown', function (event) {
   };
   var onMouseUp = function (upEvt) {
     upEvt.preventDefault();
-
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
     if (dragged) {
@@ -58,6 +62,8 @@ dialogHandler.addEventListener('mousedown', function (event) {
         dialogHandler.removeEventListener('click', onClickPreventDefault);
       };
       dialogHandler.addEventListener('click', onClickPreventDefault);
+      // startX = shiftX;
+      // startY = shiftY;
     }
   };
 
