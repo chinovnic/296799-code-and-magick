@@ -18,15 +18,54 @@ var wizardCoat = popupSetup.querySelector('.wizard-coat');
 var wizardEyes = popupSetup.querySelector('.wizard-eyes');
 var fireball = popupSetup.querySelector('.setup-fireball-wrap');
 var fragment = document.createDocumentFragment();
-var dialogHandler = popupSetup.querySelector('input');
-// координаты диалогового окна
+var dialogHandler = popupSetup.querySelector('.upload');
+// координаты первоначального появления диалогового окна,
 var startX;
 var startY;
-// перетаскивание диалогового окна
-dialogHandler.addEventListener('mousedown', function (event) {
+
+// получаем случайный элемент массива
+var getRandom = function (arrLength) {
+  return Math.floor(Math.random() * arrLength);
+};
+// имя и фамилия волшебника
+var getFullName = function () {
+  return WIZARD_NAMES[getRandom(WIZARD_NAMES.length)] + ' ' + WIZARD_SURNAMES[getRandom(WIZARD_SURNAMES.length)];
+};
+// получаем цвет чего бы то ни было из массива цветов чего бы то ни было
+var getColor = function (colors) {
+  return colors[getRandom(colors.length)];
+};
+// открытие попапа
+var openPopup = function (popup) {
+  popup.classList.remove('hidden');
+  popupSetup.style.top = startY + 'px';
+  popupSetup.style.left = startX + 'px';
+};
+
+// закрытие попапа
+var closePopup = function (popup) {
+  popup.classList.add('hidden');
+  window.removeEventListener('keydown', onEscCloser, onAvatarEnter, onAvatarCklick);
+};
+// хэндлеры
+var onEscCloser = function () {
+  if (event.keyCode === ESC_KEYCODE) {
+    closePopup(popupSetup);
+  }
+};
+var onAvatarEnter = function () {
   event.preventDefault();
-  startX = popupSetup.offsetLeft;
-  startY = popupSetup.offsetTop;
+  if (event.keyCode === ENTER_KEYCODE) {
+    openPopup(popupSetup);
+  }
+};
+var onAvatarCklick = function () {
+  event.preventDefault();
+  openPopup(popupSetup);
+};
+// что происходит при перетаскивании попапа за аватар его
+var onSetupAvatarDragger = function () {
+  event.preventDefault();
   var startCoords = {
     x: event.clientX,
     y: event.clientY
@@ -55,8 +94,8 @@ dialogHandler.addEventListener('mousedown', function (event) {
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
     if (dragged) {
-      var onClickPreventDefault = function (evt) {
-        evt.preventDefault();
+      var onClickPreventDefault = function (e) {
+        e.preventDefault();
         dialogHandler.removeEventListener('click', onClickPreventDefault);
       };
       dialogHandler.addEventListener('click', onClickPreventDefault);
@@ -65,46 +104,6 @@ dialogHandler.addEventListener('mousedown', function (event) {
 
   document.addEventListener('mousemove', onMouseMove);
   document.addEventListener('mouseup', onMouseUp);
-});
-
-// получаем случайный элемент массива
-var getRandom = function (arrLength) {
-  return Math.floor(Math.random() * arrLength);
-};
-// имя и фамилия волшебника
-var getFullName = function () {
-  return WIZARD_NAMES[getRandom(WIZARD_NAMES.length)] + ' ' + WIZARD_SURNAMES[getRandom(WIZARD_SURNAMES.length)];
-};
-// получаем цвет чего бы то ни было из массива цветов чего бы то ни было
-var getColor = function (colors) {
-  return colors[getRandom(colors.length)];
-};
-// открытие попапа
-var openPopup = function (popup) {
-  popup.classList.remove('hidden');
-  popupSetup.style.top = (startY) + 'px';
-  popupSetup.style.left = (startX) + 'px';
-};
-// закрытие попапа
-var closePopup = function (popup) {
-  popup.classList.add('hidden');
-  window.removeEventListener('keydown', onEscCloser, onAvatarEnter, onAvatarCklick);
-};
-// хэндлеры
-var onEscCloser = function () {
-  if (event.keyCode === ESC_KEYCODE) {
-    closePopup(popupSetup);
-  }
-};
-var onAvatarEnter = function () {
-  event.preventDefault();
-  if (event.keyCode === ENTER_KEYCODE) {
-    openPopup(popupSetup);
-  }
-};
-var onAvatarCklick = function () {
-  event.preventDefault();
-  openPopup(popupSetup);
 };
 // закрытие попапа по клику на крестик
 popupClose.addEventListener('click', function (event) {
@@ -160,6 +159,10 @@ userNameInput.addEventListener('input', function () {
     userNameInput.setCustomValidity('');
   }
 });
+
+// перетаскивание диалогового окна
+dialogHandler.addEventListener('mousedown', onSetupAvatarDragger);
+
 // характеристики персонажа
 for (var j = 0; j < WIZARDS_QUANTITY; j++) {
   wizards[j] = {
@@ -170,6 +173,8 @@ for (var j = 0; j < WIZARDS_QUANTITY; j++) {
 }
 // ДОМ структура х-к персонажа
 document.querySelector('.setup').classList.remove('hidden');
+startX = popupSetup.offsetLeft;
+startY = popupSetup.offsetTop;
 var renderWizard = function (currentWizard) {
   var wizardElement = similarWizardTemplate.cloneNode(true);
   wizardElement.querySelector('.setup-similar-label').textContent = currentWizard.name;
