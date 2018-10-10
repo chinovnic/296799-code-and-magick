@@ -18,6 +18,11 @@ var wizardCoat = popupSetup.querySelector('.wizard-coat');
 var wizardEyes = popupSetup.querySelector('.wizard-eyes');
 var fireball = popupSetup.querySelector('.setup-fireball-wrap');
 var fragment = document.createDocumentFragment();
+var dialogHandler = popupSetup.querySelector('.upload');
+// координаты первоначального появления диалогового окна,
+var startX;
+var startY;
+
 // получаем случайный элемент массива
 var getRandom = function (arrLength) {
   return Math.floor(Math.random() * arrLength);
@@ -33,7 +38,10 @@ var getColor = function (colors) {
 // открытие попапа
 var openPopup = function (popup) {
   popup.classList.remove('hidden');
+  popupSetup.style.top = startY + 'px';
+  popupSetup.style.left = startX + 'px';
 };
+
 // закрытие попапа
 var closePopup = function (popup) {
   popup.classList.add('hidden');
@@ -54,6 +62,48 @@ var onAvatarEnter = function () {
 var onAvatarCklick = function () {
   event.preventDefault();
   openPopup(popupSetup);
+};
+// что происходит при перетаскивании попапа за аватар его
+var onSetupAvatarDragger = function () {
+  event.preventDefault();
+  var startCoords = {
+    x: event.clientX,
+    y: event.clientY
+  };
+
+  var dragged = false;
+
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+    dragged = true;
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+
+    popupSetup.style.top = (popupSetup.offsetTop - shift.y) + 'px';
+    popupSetup.style.left = (popupSetup.offsetLeft - shift.x) + 'px';
+  };
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+    if (dragged) {
+      var onClickPreventDefault = function (e) {
+        e.preventDefault();
+        dialogHandler.removeEventListener('click', onClickPreventDefault);
+      };
+      dialogHandler.addEventListener('click', onClickPreventDefault);
+    }
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
 };
 // закрытие попапа по клику на крестик
 popupClose.addEventListener('click', function (event) {
@@ -109,6 +159,10 @@ userNameInput.addEventListener('input', function () {
     userNameInput.setCustomValidity('');
   }
 });
+
+// перетаскивание диалогового окна
+dialogHandler.addEventListener('mousedown', onSetupAvatarDragger);
+
 // характеристики персонажа
 for (var j = 0; j < WIZARDS_QUANTITY; j++) {
   wizards[j] = {
@@ -119,6 +173,8 @@ for (var j = 0; j < WIZARDS_QUANTITY; j++) {
 }
 // ДОМ структура х-к персонажа
 document.querySelector('.setup').classList.remove('hidden');
+startX = popupSetup.offsetLeft;
+startY = popupSetup.offsetTop;
 var renderWizard = function (currentWizard) {
   var wizardElement = similarWizardTemplate.cloneNode(true);
   wizardElement.querySelector('.setup-similar-label').textContent = currentWizard.name;
